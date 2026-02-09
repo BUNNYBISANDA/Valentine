@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Valentines Day</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    .gradient-background {
+      background: rgb(255, 208, 229);
+      background: linear-gradient(180deg, rgba(255, 208, 229, 1) 0%, rgba(255, 232, 242, 1) 36%, rgba(255, 255, 255, 1) 100%);
+    }
+
+    .bounce2 {
+      animation: bounce2 2s ease infinite;
+    }
+
+    @keyframes bounce2 {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-20px);
+      }
+      60% {
+        transform: translateY(-10px);
+      }
+    }
+
+    body {
+      font-family: 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    .script-font {
+      font-family: 'Pacifico', cursive;
+    }
+
+    .floating-hearts span {
+      position: absolute;
+      font-size: 28px;
+      color: #ef4444;
+      opacity: 0.35;
+      animation: floatUp 12s linear infinite;
+      filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.08));
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(40vh) scale(0.6);
+        opacity: 0;
+      }
+      10% { opacity: 0.6; }
+      50% {
+        opacity: 0.45;
+      }
+      100% {
+        transform: translateY(-60vh) scale(1.1);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body class="gradient-background min-h-screen">
+  <div class="floating-hearts pointer-events-none absolute inset-0 overflow-hidden">
+    <span style="left:10%; animation-delay:0s">&#10084;</span>
+    <span style="left:30%; animation-delay:2s">&#10084;</span>
+    <span style="left:55%; animation-delay:4s">&#10084;</span>
+    <span style="left:72%; animation-delay:1s">&#10084;</span>
+    <span style="left:85%; animation-delay:3.5s">&#10084;</span>
+    <span style="left:43%; animation-delay:5s">&#10084;</span>
+  </div>
+
+  <div id="countdown" class="absolute top-4 right-4 px-3 py-2 rounded-full bg-white/70 text-pink-700 text-sm font-semibold shadow">Loading...</div>
+
+  <div class="flex items-center justify-center min-h-screen px-4">
+    <div class="relative flex flex-col items-center p-6 rounded-3xl bg-white/75 shadow-2xl backdrop-blur">
+      <p class="script-font text-lg text-pink-700 mb-1">A tiny note just for you</p>
+      <h2 id="valentineQuestion" class="text-4xl font-bold text-[#bd1e59] text-center">Will you be my Valentine?</h2>
+      <img id="imageDisplay" src="./images/image1.gif" alt="Cute kitten with flowers" class="rounded-xl h-[320px] w-[280px] object-cover my-5 shadow" />
+      <p id="reasonLine" class="text-center text-pink-800/80 font-semibold mb-3">One thing I adore: the way you make jokes about me .</p>
+      <div class="relative flex gap-4 pt-4 items-center min-h-[96px]" id="responseButtons">
+        <button id="yesButton"
+          class="bounce2 inline-flex items-center justify-center whitespace-nowrap rounded-full text-[20px] font-semibold disabled:pointer-events-none disabled:opacity-50 hover:bg-green-400 min-h-[54px] min-w-[90px] px-5 py-3 bg-green-500 text-white transition shadow-lg shadow-green-200">
+          Yes
+        </button>
+        <button id="noButton"
+          class="inline-flex items-center justify-center whitespace-nowrap rounded-full text-[20px] font-semibold transition disabled:pointer-events-none disabled:opacity-50 hover:bg-red-700 h-[48px] min-w-[80px] w-auto px-4 py-2 bg-red-500 text-white shadow-lg shadow-red-200">
+          No
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import confetti from 'https://cdn.skypack.dev/canvas-confetti';
+    const yesButton = document.getElementById('yesButton');
+    const noButton = document.getElementById('noButton');
+    const imageDisplay = document.getElementById('imageDisplay');
+    const valentineQuestion = document.getElementById('valentineQuestion');
+    const responseButtons = document.getElementById('responseButtons');
+    const reasonLine = document.getElementById('reasonLine');
+    const countdown = document.getElementById('countdown');
+  
+    let noClickCount = 0;
+    let buttonHeight = 48; // Starting height in pixels
+    let buttonWidth = 80;
+    let fontSize = 20; // Starting font size in pixels
+    let reasonIndex = 0;
+    const imagePaths = [
+      "./images/image1.gif",
+      "./images/image2.gif",
+      "./images/image3.gif",
+      "./images/image4.gif",
+      "./images/image5.gif",
+      "./images/image6.gif",
+      "./images/image7.gif"
+    ];
+
+    const reasons = [
+      "You laugh at my worst jokes and make them feel funny",
+      "Your texts make my day brighter",
+      "You notice the tiny details nobody else sees",
+      "I love you more than anyone in this world",
+      "You make me want to be the softest version of myself",
+      "Hearing your name pop up on my phone still makes me blush"
+    ];
+
+    const target = new Date('2026-02-14T00:00:00');
+    const updateCountdown = () => {
+      const diff = target - Date.now();
+      const days = Math.max(0, Math.ceil(diff / 86400000));
+      countdown.textContent = `${days} day${days === 1 ? '' : 's'} until our Valentine`;
+    };
+    updateCountdown();
+    setInterval(updateCountdown, 1000 * 60 * 15); // Refresh every 15 minutes (no need to spam)
+
+    const bumpReason = () => {
+      reasonLine.textContent = `One thing I adore: ${reasons[reasonIndex % reasons.length]}.`;
+      reasonIndex++;
+    };
+  
+    noButton.addEventListener('click', function() {
+      if (noClickCount < 5) {
+        noClickCount++;
+        imageDisplay.src = imagePaths[noClickCount];
+        buttonHeight += 35; // Increase height by 5px on each click
+        buttonWidth += 35;
+        fontSize += 25; // Increase font size by 1px on each click
+        yesButton.style.height = `${buttonHeight}px`; // Update button height
+        yesButton.style.width = `${buttonWidth}px`;
+        yesButton.style.fontSize = `${fontSize}px`; // Update font size
+        if (noClickCount < 6) {
+          noButton.textContent = ["No", "Ayyoh sure da?", "Ochchala napulu wenna epa ithim", "Don't do this to me :(", "You're breaking my heart", "I'm gonna cry..."][noClickCount];
+        }
+        bumpReason();
+
+        if (noClickCount >= 3) {
+          const { clientWidth, clientHeight } = document.documentElement;
+          noButton.style.position = 'absolute';
+          noButton.style.left = `${Math.random() * (clientWidth - noButton.offsetWidth)}px`;
+          noButton.style.top = `${Math.random() * (clientHeight - noButton.offsetHeight)}px`;
+        }
+
+        confetti({ particleCount: 60, spread: 70, origin: { y: 0.7 } });
+      }
+    });
+  
+    yesButton.addEventListener('click', () => {
+      imageDisplay.src = './images/image7.gif'; // Change to image7.gif
+      valentineQuestion.textContent = "Yayyy!! :3"; // Change the question text
+      responseButtons.style.display = 'none'; // Hide both buttons
+      reasonLine.textContent = 'I promise to keep making you smile.';
+      confetti(); // Trigger confetti animation
+    });
+  </script>  
+</body>
+</html>
